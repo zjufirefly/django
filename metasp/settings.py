@@ -55,7 +55,7 @@ ROOT_URLCONF = 'metasp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [externals, templates],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
