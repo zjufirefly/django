@@ -4,4 +4,8 @@ from django.http import HttpResponse
 
 def index(request):
 #    return HttpResponse("Hello World")
+    print request.path
     return render(request, 'index.html')
+
+def all(request):
+    return render(request, request.path[1:])
