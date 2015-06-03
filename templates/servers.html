@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>服务器管理</h1>
+
+
+<div class="widget-box">
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th><input name="" type="checkbox" value="" /></th>
+        <th>Server Address</th>
+        <th>Server Port</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for serv in servs %}
+      <tr>
+        <td><input name={{serv.server_id}} type="checkbox" value="" /></td>
+        <td>{{serv.server_ip}}</td>
+        <td>{{serv.server_port}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="form-actions">                                                           
+    <span class="pull-right">
+      <button type="submit" class="btn btn-success">Add Server</button>
+      <button type="submit" class="btn btn-danger">Delete Server</button>
+    </span>
+  </div>
+
+</div>
+
+{% endblock %}
+
