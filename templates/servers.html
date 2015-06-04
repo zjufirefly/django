@@ -44,11 +44,9 @@ function del_server()
   for(var i=0;i<cond.length;i++){
     if(cond[i].checked == "checked" || cond[i].checked == true) {
       del_ids+=cond[i].id;
-    }
-
-    if (i != (cond.length -1)) {
       del_ids+=":";
     }
+
   }
 
   alert(del_ids);
