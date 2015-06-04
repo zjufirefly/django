@@ -16,21 +16,44 @@
     <tbody>
       {% for serv in servs %}
       <tr>
-        <td><input name={{serv.server_id}} type="checkbox" value="" /></td>
+        <td><input id={{serv.server_id}} name="conditions[]" type="checkbox"/></td>
         <td>{{serv.server_ip}}</td>
         <td>{{serv.server_port}}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <div class="form-actions">                                                           
+  <div class="form-actions">
     <span class="pull-right">
-      <button type="submit" class="btn btn-success">Add Server</button>
-      <button type="submit" class="btn btn-danger">Delete Server</button>
+      <button onclick="add_server()" class="btn btn-success">Add Server</button>
+      <button onclick="del_server()" class="btn btn-danger">Delete Server</button>
     </span>
   </div>
-
 </div>
+
+<script>
+function add_server()
+{
+}
+
+function del_server()
+{
+  var del_ids = "";
+
+  var cond = document.getElementsByName("conditions[]");
+  for(var i=0;i<cond.length;i++){
+    if(cond[i].checked == "checked" || cond[i].checked == true) {
+      del_ids+=cond[i].id;
+    }
+
+    if (i != (cond.length -1)) {
+      del_ids+=":";
+    }
+  }
+
+  alert(del_ids);
+}
+</script>
 
 {% endblock %}
 
