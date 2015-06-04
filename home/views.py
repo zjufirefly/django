@@ -30,6 +30,8 @@ def servers(request):
 
     return render(request, 'servers.html', {'servs': servs})
 
+def delete_server(request):
+    return HttpResponse(request.GET['del_ids'])
 
 def all(request):
     return render(request, request.path[1:])
