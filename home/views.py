@@ -1,6 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import mysql.connector
+from mysql.connector import errorcode
+import readconfig
 # Create your views here.
+
+conf = readconfig.readconfig("./config.ini")
 
 def index(request):
 #    return HttpResponse("Hello World")
@@ -14,19 +19,20 @@ class server:
         self.server_port = 3306
 
 def servers(request):
-    serv1 = server()
-    serv1.server_id = 1;
-    serv1.server_ip = "10.9.3.241"
-    serv1.port = 3306
-
-    serv2 = server()
-    serv2.server_id = 2;
-    serv2.server_ip = "10.9.3.242"
-    serv2.port = 3306
+    cnx = mysql.connector.connect(user=conf.getuser(), host=conf.gethost(), password=conf.getpwd(),
+            database=conf.getdb(), port=conf.getport())
+    cursor = cnx.cursor()
+    query_state = ("select server_id, ip_addr, port from servers")
+    cursor.execute(query_state)
+    results = cursor.fetchall()
 
     servs = []
-    servs.append(serv1)
-    servs.append(serv2)
+    for row in results:
+        serv = server()
+        serv.server_id = row[0]
+        serv.server_ip = row[1]
+        serv.server_port = row[2]
+        servs.append(serv)
 
     return render(request, 'servers.html', {'servs': servs})
 

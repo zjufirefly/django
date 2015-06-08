@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>服务器管理</h1>
+<h1>Server Manager</h1>
 
 
 <div class="widget-box">
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped with-check">
     <thead>
       <tr>
-        <th><input name="" type="checkbox" value="" /></th>
+        <th></th>
         <th>Server Address</th>
         <th>Server Port</th>
       </tr>
@@ -25,15 +25,57 @@
   </table>
   <div class="form-actions">
     <span class="pull-right">
-      <button onclick="add_server()" class="btn btn-success">Add Server</button>
+      <button class="btn btn-primary" data-toggle="modal" data-target="#addserver">Add Server</button>
       <button onclick="del_server()" class="btn btn-danger">Delete Server</button>
     </span>
   </div>
 </div>
 
+<div class="modal fade" id="addserver" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add Server</h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" class="form-horizontal" onsubmit="return validate_server_form(this)">
+            <div class="control-group">
+                <label class="control-label">Server Address :</label>
+                <div class="controls">
+                    <input id="server_ip" type="text" class="span11" style="height:20px;width:300px" name = "servers_ip_addr" placeholder="Server Address">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Server Port :</label>
+                <div class="controls">
+                    <input id="server_port" type="text" class="span11" name = "servers_port" style="height:20px;width:300px" placeholder="Server Port">
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="add_server()">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
 function add_server()
 {
+    
+    var server_ip = document.getElementById("server_ip").value;
+    var server_port = document.getElementById("server_port").value;
+    $('#addserver').modal('hide');
+    
+    $.post("delete_server",
+    {
+        'del_ids':'1:2:',
+    });
+    
 }
 
 function del_server()
