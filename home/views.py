@@ -23,7 +23,6 @@ class server:
 def servers(request):
     return display_servers(request, "")
 
-    
 def display_servers(request, err_msg):
     cnx = mysql.connector.connect(user=conf.getuser(), host=conf.gethost(), password=conf.getpwd(),
             database=conf.getdb(), port=conf.getport())
@@ -45,10 +44,10 @@ def display_servers(request, err_msg):
 def add_server(request):
     ip_addr = request.POST.get('server_ip', '')
     port = request.POST.get('server_port', '')
-    
+
     if (ip_addr == '' or port == ''):
         return display_servers(request, '')
-    
+
     cnx = mysql.connector.connect(user=conf.getuser(), host = conf.gethost(), password = conf.getpwd(),
             database=conf.getdb(), port=conf.getport())
     cursor = cnx.cursor()
@@ -62,7 +61,7 @@ def add_server(request):
         err_msg = "Server ip = %s, port = %s is already exist" % (ip_addr, port)
         return display_servers(request, err_msg)
 
-        
+
     cursor.execute("insert into servers (ip_addr, port) value (%s, %s)", (ip_addr, port))
     if cursor.fetchwarnings():
         cursor.close()
@@ -73,12 +72,42 @@ def add_server(request):
     cnx.commit()
     cursor.close()
     cnx.close()
-    
+
     return servers(request)
 
 
 def delete_server(request):
-    return HttpResponse(request.GET['del_ids'])
+    del_ids = request.POST.get('del_ids', '').split(":")
+    cnx = mysql.connector.connect(user=conf.getuser(), host = conf.gethost(), password = conf.getpwd(),
+            database=conf.getdb(), port=conf.getport())
+    cursor = cnx.cursor()
+    for serv_id in del_ids:
+        cursor.execute(("select table_id from asso_serv_tb where server_id = %s"), (serv_id, ))
+        tb_ids = cursor.fetchall()
+        for tb_id in tb_ids:
+            tb_id = tb_id[0]
+            cursor.execute(("select count(*) from asso_serv_tb where table_id = %s"), (tb_id,))
+            count = cursor.fetchall()[0]
+            if (1 == count):
+                cursor.execute(("delete from asso_serv_tb where table_id = %s"), (tb_id,))
+                cursor.execute(("delete from tbs where table_id = %s"), (tb_id,))
+
+
+        cursor.execute(("select database_id from asso_serv_db where server_id = %s"), (serv_id,))
+        db_ids = cursor.fetchall()
+        for db_id in db_ids:
+            db_id = db_id[0]
+            cursor.execute(("select count(*) from asso_serv_db where database_id = %s"), (db_id,))
+            count = cursor.fetchall()[0]
+            if (1 == count):
+                cursor.execute(("delete from asso_serv_db where database_id = %s"), (db_id,))
+                cursor.execute(("delete from dbs where database_id = %s"), (db_id,))
+        cursor.execute(("delete from servers where server_id = %s"), (serv_id,))
+
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+    return display_servers(request, "")
 
 def all(request):
     return render(request, request.path[1:])
