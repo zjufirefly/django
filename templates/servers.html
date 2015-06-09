@@ -58,6 +58,9 @@
         </form>
       </div>
       <div class="modal-footer">
+        <span class="pull-left" style="color:red;">
+          <p id="ip_port_check"></p>
+        </span>
         <span class="pull-right">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" onclick="add_server()">Add</button>
@@ -84,6 +87,19 @@ function add_server()
 
     var server_ip = document.getElementById("server_ip").value;
     var server_port = document.getElementById("server_port").value;
+    
+    if (!isIP(server_ip))
+    {
+        document.getElementById("ip_port_check").innerHTML = "Server address's format is error."
+        return;
+    }
+    
+    if (!isPort(server_port))
+    {
+        document.getElementById("ip_port_check").innerHTML = "Server port's format is error."
+        return;
+    }
+    
     $('#addserver').modal('hide');
 
     jsPost("add_server",
@@ -109,6 +125,42 @@ function del_server()
   alert(del_ids);
   location.href="delete_server?del_ids="+del_ids;
 }
+
+function isIP(ip)
+{
+    var reSpaceCheck = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/;
+    if (reSpaceCheck.test(ip))
+    {
+        ip.match(reSpaceCheck);
+        if (RegExp.$1<=255&&RegExp.$1>=0
+          &&RegExp.$2<=255&&RegExp.$2>=0
+          &&RegExp.$3<=255&&RegExp.$3>=0
+          &&RegExp.$4<=255&&RegExp.$4>=0)
+        {
+            return true;
+        }else
+        {
+            return false;
+        }
+    }else
+    {
+        return false;
+    }
+}
+
+
+function isPort(str)
+{
+    var parten=/^(\d)+$/g;
+    if(parten.test(str)&&parseInt(str)<=65535&&parseInt(str)>=0)
+    {
+        return true;
+     }
+    else
+    {
+        return false;
+     }
+ }
 </script>
 
 {% endblock %}
