@@ -36,6 +36,11 @@ def servers(request):
 
     return render(request, 'servers.html', {'servs': servs})
 
+def add_server(request):
+    print request.POST['server_ip']
+    print request.POST['server_port']
+    return HttpResponse('add server')
+
 def delete_server(request):
     return HttpResponse(request.GET['del_ids'])
 

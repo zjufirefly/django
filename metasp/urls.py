@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^$', 'home.views.index'),
     url(r'^servers', 'home.views.servers'),
     url(r'^delete_server', 'home.views.delete_server'),
+    url(r'^add_server', 'home.views.add_server'),
     url(r'.*', 'home.views.all'),
 ]

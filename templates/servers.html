@@ -26,6 +26,7 @@
   <div class="form-actions">
     <span class="pull-right">
       <button class="btn btn-primary" data-toggle="modal" data-target="#addserver">Add Server</button>
+      <!--button onclick="add_server()" class="btn btn-primary">Add Server</button-->
       <button onclick="del_server()" class="btn btn-danger">Delete Server</button>
     </span>
   </div>
@@ -64,6 +65,16 @@
 
 
 <script>
+var jsPost = function(action, values) {
+    var id = Math.random();
+    document.write('<form id="post' + id + '" name="post'+ id +'" action="' + action + '" method="post">');
+    for (var key in values) {
+        document.write('<input type="hidden" name="' + key + '" value="' + values[key] + '" />');
+    }
+    document.write('</form>');    
+    document.getElementById('post' + id).submit();
+}
+ 
 function add_server()
 {
     
@@ -71,11 +82,11 @@ function add_server()
     var server_port = document.getElementById("server_port").value;
     $('#addserver').modal('hide');
     
-    $.post("delete_server",
+    jsPost("add_server",
     {
-        'del_ids':'1:2:',
+        'server_ip':server_ip,
+        'server_port':server_port,
     });
-    
 }
 
 function del_server()
