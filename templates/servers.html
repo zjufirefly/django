@@ -24,9 +24,11 @@
     </tbody>
   </table>
   <div class="form-actions">
+    <span class="pull-left" style="color:red;">
+        <p id="errmsg">{{err_msg}}</p>
+    </span>
     <span class="pull-right">
       <button class="btn btn-primary" data-toggle="modal" data-target="#addserver">Add Server</button>
-      <!--button onclick="add_server()" class="btn btn-primary">Add Server</button-->
       <button onclick="del_server()" class="btn btn-danger">Delete Server</button>
     </span>
   </div>
@@ -56,8 +58,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="add_server()">Add</button>
+        <span class="pull-right">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="add_server()">Add</button>
+        </span>
       </div>
     </div>
   </div>
@@ -71,17 +75,17 @@ var jsPost = function(action, values) {
     for (var key in values) {
         document.write('<input type="hidden" name="' + key + '" value="' + values[key] + '" />');
     }
-    document.write('</form>');    
+    document.write('</form>');
     document.getElementById('post' + id).submit();
 }
- 
+
 function add_server()
 {
-    
+
     var server_ip = document.getElementById("server_ip").value;
     var server_port = document.getElementById("server_port").value;
     $('#addserver').modal('hide');
-    
+
     jsPost("add_server",
     {
         'server_ip':server_ip,

@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 import mysql.connector
 from mysql.connector import errorcode
 import readconfig
@@ -19,6 +21,10 @@ class server:
         self.server_port = 3306
 
 def servers(request):
+    return display_servers(request, "")
+
+    
+def display_servers(request, err_msg):
     cnx = mysql.connector.connect(user=conf.getuser(), host=conf.gethost(), password=conf.getpwd(),
             database=conf.getdb(), port=conf.getport())
     cursor = cnx.cursor()
@@ -33,13 +39,43 @@ def servers(request):
         serv.server_ip = row[1]
         serv.server_port = row[2]
         servs.append(serv)
+    return render(request, 'servers.html', {'servs': servs, 'err_msg':err_msg})
 
-    return render(request, 'servers.html', {'servs': servs})
 
 def add_server(request):
-    print request.POST['server_ip']
-    print request.POST['server_port']
-    return HttpResponse('add server')
+    ip_addr = request.POST.get('server_ip', '')
+    port = request.POST.get('server_port', '')
+    
+    if (ip_addr == '' or port == ''):
+        return display_servers(request, '')
+    
+    cnx = mysql.connector.connect(user=conf.getuser(), host = conf.gethost(), password = conf.getpwd(),
+            database=conf.getdb(), port=conf.getport())
+    cursor = cnx.cursor()
+    cnx.get_warnings = True
+    cursor.execute("select server_id from servers where ip_addr = %s and port = %s", (ip_addr, port))
+    results = cursor.fetchall()
+
+    if results:
+        cursor.close()
+        cnx.close()
+        err_msg = "Server ip = %s, port = %s is already exist" % (ip_addr, port)
+        return display_servers(request, err_msg)
+
+        
+    cursor.execute("insert into servers (ip_addr, port) value (%s, %s)", (ip_addr, port))
+    if cursor.fetchwarnings():
+        cursor.close()
+        cnx.close()
+        err_msg = "Add server ip = %s, port = %s failed" % (ip_addr, port)
+        return display_servers(request, err_msg)
+
+    cnx.commit()
+    cursor.close()
+    cnx.close()
+    
+    return servers(request)
+
 
 def delete_server(request):
     return HttpResponse(request.GET['del_ids'])
